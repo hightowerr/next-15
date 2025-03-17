@@ -1,4 +1,4 @@
-import { IconCloud } from "@/components/ui/icon-cloud";
+// import { IconCloud } from "@/components/ui/icon-cloud";
 
 export const slugs = [
   "typescript",
@@ -24,6 +24,7 @@ export const slugs = [
   "excel",
   "notion",
   "wordpress",
+  "slack",
 ];
 
 // Create a more readable version of the techs from the slugs

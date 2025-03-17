@@ -1,4 +1,5 @@
-import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import { Menu } from "lucide-react";
+import Image from 'next/image';
 
 import {
   Accordion,
@@ -65,10 +66,10 @@ const GradientButton = ({ children, className, ...props }: React.ComponentProps<
 
 const Navbar1 = ({
   logo = {
-    url: "https://www.shadcnblocks.com",
-    src: "https://www.shadcnblocks.com/images/block/block-1.svg",
+    url: "/",
+    src: "/logo.svg",
     alt: "logo",
-    title: "Jam",
+    title: "NetJam",
   },
   menu = [
     // { title: "Home", url: "#" },
@@ -145,12 +146,18 @@ const Navbar1 = ({
 }: Navbar1Props) => {
   return (
     <section className="fixed top-0 left-0 right-0 z-50 bg-[#F2F0EF]/95 backdrop-blur supports-[backdrop-filter]:bg-[#F2F0EF]/60">
-      <div className="container">
+      <div className="container px-6 md:px-6">
         {/* Desktop Menu */}
         <nav className="hidden h-16 items-center justify-between lg:flex">
           <div className="flex items-center gap-6">
-            <a href={logo.url} className="flex items-center gap-2">
-              <img src={logo.src} className="w-8" alt={logo.alt} />
+            <a href={logo.url} className="flex items-center gap-2 mt-16">
+              <Image
+                src={logo.src}
+                alt={logo.alt}
+                width={40}
+                height={40}
+                className="w-10 h-10"
+              />
               <span className="text-lg font-semibold">{logo.title}</span>
             </a>
             <NavigationMenu>
@@ -169,7 +176,13 @@ const Navbar1 = ({
         {/* Mobile Menu */}
         <div className="flex h-16 items-center justify-between lg:hidden">
           <a href={logo.url} className="flex items-center gap-2">
-            <img src={logo.src} className="w-8" alt={logo.alt} />
+            <Image
+              src={logo.src}
+              alt={logo.alt}
+              width={40}
+              height={40}
+              className="w-10 h-10"
+            />
             <span className="text-lg font-semibold">{logo.title}</span>
           </a>
           <Sheet>
@@ -182,7 +195,13 @@ const Navbar1 = ({
               <SheetHeader>
                 <SheetTitle>
                   <a href={logo.url} className="flex items-center gap-2">
-                    <img src={logo.src} className="w-8" alt={logo.alt} />
+                    <Image
+                      src={logo.src}
+                      alt={logo.alt}
+                      width={40}
+                      height={40}
+                      className="w-10 h-10"
+                    />
                     <span className="text-lg font-semibold">{logo.title}</span>
                   </a>
                 </SheetTitle>

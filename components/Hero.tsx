@@ -1,7 +1,31 @@
-import { ArrowRight } from "lucide-react";
+"use client";
+
+// import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cloudImages } from '@/constants/skills';
 import { IconCloud } from "@/components/ui/icon-cloud";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Hero1Props {
   badge?: string;
@@ -10,7 +34,10 @@ interface Hero1Props {
   buttons?: {
     primary?: {
       text: string;
-      url: string;
+      url?: string;
+      style?: React.CSSProperties;
+      variant?: string;
+      className?: string;
     };
     secondary?: {
       text: string;
@@ -19,16 +46,66 @@ interface Hero1Props {
   };
 }
 
+const formSchema = z.object({
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+  message: z.string().min(10, {
+    message: "Message must be at least 10 characters.",
+  }),
+});
+
 const Hero1 = ({
-  heading = "Blocks Built With Shadcn & Tailwind",
-  description = "Finely crafted components built with React, Tailwind and Shadcn UI. Developers can copy and paste these blocks directly into their project.",
+  heading = "Ready to Work Smarter with AI?",
+  description = "Ready to save time and reduce costs? Our small team specialises in custom AI solutions that deliver real results. Tell us about your challenges today.",
   buttons = {
     primary: {
-      text: "Discover all components",
-      url: "https://www.shadcnblocks.com",
+      text: "Contact us",
+      url: "#"
     },
   },
 }: Hero1Props) => {
+  const [open, setOpen] = useState(false);
+  
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      message: ""
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // POST to the webhook URL
+    fetch('https://primary-production-6093.up.railway.app/webhook/2024f776-33be-4cf6-9841-69befd4f8f8a', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(values),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Success:', data);
+        // Reset the form after successful submission
+        form.reset();
+        setOpen(false);
+      })
+      .catch(error => {
+        console.error('Error submitting form:', error);
+        // You could add error handling UI here
+      });
+  }
+
   return (
     <section className="py-28 bg-[#F2F0EF]">
       <div className="container mx-auto">
@@ -42,9 +119,82 @@ const Hero1 = ({
             </p>
             <div className="flex w-full flex-col justify-start gap-2 sm:flex-row">
               {buttons.primary && (
-                <Button asChild className="w-full sm:w-auto bg-black hover:bg-black/90 text-white rounded-md">
-                  <a href={buttons.primary.url}>{buttons.primary.text}</a>
-                </Button>
+                <Dialog open={open} onOpenChange={setOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="w-full sm:w-auto bg-[#ee5656] hover:bg-[#ee5656]/90 text-white rounded-md">
+                      {buttons.primary.text}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px] bg-black text-white border-gray-700">
+                    <DialogHeader>
+                      <DialogTitle className="text-white">Get in touch</DialogTitle>
+                      <DialogDescription className="text-gray-300">
+                        Fill out this form to get in touch with our team.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">Name</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="Your name" 
+                                  {...field} 
+                                  className="bg-gray-60 text-white placeholder:text-gray-400 border-gray-700 focus:border-gray-500 focus:ring-gray-500" 
+                                />
+                              </FormControl>
+                              <FormMessage className="text-white" />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">Email</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="your.email@example.com" 
+                                  {...field} 
+                                  className="bg-white-800 text-white placeholder:text-gray-400 border-gray-700 focus:border-gray-500 focus:ring-gray-500" 
+                                />
+                              </FormControl>
+                              <FormMessage className="text-white" />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="message"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">Message</FormLabel>
+                              <FormControl>
+                                <Textarea 
+                                  placeholder="Your message" 
+                                  {...field} 
+                                  className="bg-white-800 text-white placeholder:text-gray-400 border-gray-700 focus:border-gray-500 focus:ring-gray-500" 
+                                />
+                              </FormControl>
+                              <FormMessage className="text-white" />
+                            </FormItem>
+                          )}
+                        />
+                        <Button 
+                          type="submit" 
+                          className="w-full bg-white text-black hover:bg-gray-200 border border-gray-300"
+                        >
+                          Submit
+                        </Button>
+                      </form>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
               )}
             </div>
           </div>
